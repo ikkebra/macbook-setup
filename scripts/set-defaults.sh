@@ -241,8 +241,9 @@ defaults write com.apple.frameworks.diskimages skip-verify -bool true
 defaults write com.apple.frameworks.diskimages skip-verify-locked -bool true
 defaults write com.apple.frameworks.diskimages skip-verify-remote -bool true
 
-# Use column view in all Finder windows by default
-defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
+# Use list view in all Finder windows by default
+# Four-letter codes: Nlsv=list, icnv=icon, clmv=column, Flwv=gallery
+defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
 
 # Disable the warning before emptying the Trash
 defaults write com.apple.finder WarnOnEmptyTrash -bool false
