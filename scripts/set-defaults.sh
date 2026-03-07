@@ -340,22 +340,50 @@ defaults write com.apple.dock mineffect -string "scale"
 success "Dock configured (auto-hide with 3s delay, 16px icons, left side)"
 
 ###############################################################################
-# Spotlight — Disable shortcut (Alfred/Raycast will use Cmd+Space)            #
+# Spotlight — Disable shortcuts (Raycast=Cmd+Space, Alfred=Ctrl+Space)        #
 ###############################################################################
 
-step "Configuring Spotlight"
+step "Disabling Spotlight shortcuts"
 
-# Note: Disabling the Spotlight shortcut via defaults is unreliable on newer macOS.
-# The most reliable method is through System Settings > Keyboard > Shortcuts > Spotlight.
-# We'll try the defaults approach, but you may need to do this manually.
-
-# Disable Spotlight keyboard shortcut (Cmd+Space) so Alfred can use it
+# Disable Spotlight keyboard shortcut (Cmd+Space) so Raycast can use it
+# Key 64 = "Show Spotlight search" (Cmd+Space)
+# Key 65 = "Show Finder search window" (Cmd+Option+Space)
 defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "{ enabled = 0; value = { parameters = (32, 49, 1048576); type = standard; }; }"
 defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 65 "{ enabled = 0; value = { parameters = (32, 49, 1572864); type = standard; }; }"
 
+success "Spotlight shortcuts disabled"
+echo ""
+echo "  Launcher shortcuts to configure after first launch:"
+echo "    Raycast  → Cmd+Space (Raycast sets this on first launch)"
+echo "    Alfred   → Ctrl+Space (set manually in Alfred Preferences > General)"
+echo ""
 warn "If Cmd+Space still triggers Spotlight after reboot:"
 echo "  Go to System Settings > Keyboard > Keyboard Shortcuts > Spotlight"
-echo "  Uncheck both Spotlight shortcuts, then set Alfred to Cmd+Space"
+echo "  Uncheck both Spotlight shortcuts"
+
+###############################################################################
+# Login Items — Auto-start apps at login                                       #
+###############################################################################
+
+step "Configuring login items (auto-start at login)"
+
+# macOS uses the Login Items mechanism. We use osascript to add them.
+login_apps=(
+    "/Applications/Alfred 5.app"
+    "/Applications/Raycast.app"
+    "/Applications/Rectangle.app"
+)
+
+for app_path in "${login_apps[@]}"; do
+    app_name=$(basename "$app_path" .app)
+    if [[ -d "$app_path" ]]; then
+        osascript -e "tell application \"System Events\" to make login item at end with properties {path:\"$app_path\", hidden:true}" 2>/dev/null \
+            && success "$app_name set to launch at login (hidden)" \
+            || warn "Could not add $app_name to login items"
+    else
+        warn "$app_name not installed yet — will need to add manually after install"
+    fi
+done
 
 success "Spotlight shortcuts disabled"
 
