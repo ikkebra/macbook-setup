@@ -87,6 +87,59 @@ cp "${REPO_DIR}/dotfiles/zshrc" "$HOME/.zshrc"
 success ".zshrc installed"
 
 ###############################################################################
+# iTerm2 — Preferences                                                        #
+###############################################################################
+
+step "Configuring iTerm2 preferences"
+
+# Disable "Confirm closing multiple sessions"
+defaults write com.googlecode.iterm2 PromptOnQuit -bool false
+
+# Disable "Confirm Quit iTerm2" (Cmd+Q)
+defaults write com.googlecode.iterm2 NeverWarnAboutShortLivedSessions_selection -int 0
+
+# Disable all confirmations on system shutdown, restart, and log out
+defaults write com.googlecode.iterm2 NeverBlockSystemShutdown -bool true
+
+# Don't display the annoying prompt when quitting iTerm2
+defaults write com.googlecode.iterm2 OnlyWhenMoreTabs -bool false
+
+# Set font to MesloLGS NF for Powerlevel10k compatibility
+/usr/libexec/PlistBuddy -c "Set ':New Bookmarks:0:Normal Font' MesloLGS-NF-Regular 14" \
+    ~/Library/Preferences/com.googlecode.iterm2.plist 2>/dev/null || true
+
+success "iTerm2 closing confirmations disabled"
+
+###############################################################################
+# iTerm2 — Catppuccin Mocha Color Scheme                                      #
+###############################################################################
+
+step "Installing Catppuccin Mocha color scheme for iTerm2"
+
+ITERM_COLORS_DIR="$HOME/.iterm2"
+mkdir -p "$ITERM_COLORS_DIR"
+
+CATPPUCCIN_URL="https://raw.githubusercontent.com/catppuccin/iterm/main/colors/catppuccin-mocha.itermcolors"
+CATPPUCCIN_FILE="${ITERM_COLORS_DIR}/catppuccin-mocha.itermcolors"
+
+if [[ -f "$CATPPUCCIN_FILE" ]]; then
+    success "Catppuccin Mocha already downloaded"
+else
+    curl -fsSL "$CATPPUCCIN_URL" -o "$CATPPUCCIN_FILE" 2>/dev/null \
+        && success "Catppuccin Mocha downloaded" \
+        || warn "Could not download Catppuccin Mocha — install manually from https://github.com/catppuccin/iterm"
+fi
+
+# Import the color scheme into iTerm2
+# This opens the .itermcolors file which triggers iTerm2's import dialog
+if [[ -f "$CATPPUCCIN_FILE" ]]; then
+    open "$CATPPUCCIN_FILE" 2>/dev/null || true
+    success "Catppuccin Mocha color scheme imported into iTerm2"
+    echo "  If iTerm2 is not running, the import will happen on next launch."
+    echo "  To activate: iTerm2 > Preferences > Profiles > Colors > Color Presets > Catppuccin Mocha"
+fi
+
+###############################################################################
 # Set Zsh as default shell                                                     #
 ###############################################################################
 
@@ -103,4 +156,5 @@ echo ""
 success "Shell environment configured!"
 warn "Open a new terminal or run 'source ~/.zshrc' to apply changes."
 warn "Run 'p10k configure' in iTerm2 to set up your Powerlevel10k prompt."
+warn "Set Catppuccin Mocha as active: iTerm2 > Preferences > Profiles > Colors > Color Presets"
 echo ""
