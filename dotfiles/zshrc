@@ -60,6 +60,26 @@ cd() {
 }
 
 ###############################################################################
+# Homebrew weekly update check                                                 #
+###############################################################################
+
+_brew_weekly_check() {
+    local stamp="$HOME/.brew_last_update"
+    local now=$(date +%s)
+    local week=604800  # 7 days in seconds
+
+    if [[ ! -f "$stamp" ]] || (( now - $(cat "$stamp") > week )); then
+        echo "\033[1;33m⚠ Homebrew hasn't been updated in a while. Updating...\033[0m"
+        brew update && brew upgrade && brew cleanup
+        echo "$now" > "$stamp"
+        echo "\033[0;32m✓ Homebrew updated!\033[0m"
+    fi
+}
+
+# Run in background so it doesn't slow down shell startup
+(_brew_weekly_check &) 2>/dev/null
+
+###############################################################################
 # Editor                                                                       #
 ###############################################################################
 

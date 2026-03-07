@@ -74,6 +74,13 @@ step "Disabling Homebrew analytics"
 brew analytics off
 success "Homebrew analytics disabled"
 
+step "Setting up Homebrew auto-update"
+brew tap homebrew/autoupdate 2>/dev/null || true
+# Run brew update + upgrade every 24 hours (86400 seconds) in the background
+brew autoupdate start 86400 --upgrade --cleanup 2>/dev/null \
+    && success "Homebrew auto-update enabled (every 24 hours)" \
+    || warn "Homebrew auto-update setup skipped — set up manually with: brew autoupdate start"
+
 ###############################################################################
 # Run setup scripts                                                            #
 ###############################################################################

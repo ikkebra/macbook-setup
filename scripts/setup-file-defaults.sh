@@ -157,20 +157,24 @@ duti -s "$VSCODE_BUNDLE" "public.yaml" editor 2>/dev/null || true
 success "VS Code set as default for code and text files"
 
 ###############################################################################
-# Brave — Default browser                                                      #
+# Firefox — Default browser                                                    #
 ###############################################################################
 
-step "Setting Brave as default browser"
+step "Setting Firefox as default browser"
 
-# Note: Setting default browser via command line is limited on modern macOS.
-# The OS usually prompts the user. But we can try:
-BRAVE_BUNDLE="com.brave.Browser"
+# Note: macOS requires user confirmation for default browser changes.
+# duti can set HTML file associations, but the OS-level default browser
+# prompt will still appear on first launch.
+FIREFOX_BUNDLE="org.mozilla.firefox"
 
-duti -s "$BRAVE_BUNDLE" "public.html" viewer 2>/dev/null || true
-duti -s "$BRAVE_BUNDLE" "public.xhtml" viewer 2>/dev/null || true
-duti -s "$BRAVE_BUNDLE" "public.url" viewer 2>/dev/null || true
+duti -s "$FIREFOX_BUNDLE" "public.html" viewer 2>/dev/null || true
+duti -s "$FIREFOX_BUNDLE" "public.xhtml" viewer 2>/dev/null || true
+duti -s "$FIREFOX_BUNDLE" "public.url" viewer 2>/dev/null || true
 
-warn "macOS may prompt you to confirm Brave as default browser on first launch"
+# Try to open System Settings to the Default Browser section
+warn "macOS requires manual confirmation to set the default browser."
+echo "  When Firefox launches for the first time, it will ask to be set as default."
+echo "  Or go to: System Settings > Desktop & Dock > Default web browser"
 
 success "File associations configured"
 
@@ -178,5 +182,5 @@ echo ""
 success "Default applications configured!"
 echo "  Media (video/audio) → VLC"
 echo "  Code/text files → VS Code"
-echo "  Web content → Brave"
+echo "  Default browser → Firefox (confirm on first launch)"
 echo ""
