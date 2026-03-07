@@ -24,6 +24,11 @@ fi
 # CLI Tools (Homebrew Formulas)                                                #
 ###############################################################################
 
+step "Adding Homebrew taps"
+
+brew tap stripe/stripe-cli 2>/dev/null || true
+success "Homebrew taps configured"
+
 step "Installing CLI tools via Homebrew"
 
 formulas=(
@@ -44,12 +49,15 @@ formulas=(
     eza             # Modern ls replacement
     fd              # Fast find alternative
     fzf             # Fuzzy finder
+    zoxide          # Smarter cd that learns your habits
+    lazygit         # Terminal UI for git
     tldr            # Simplified man pages
     fastfetch       # System info display
 
     # Development
     composer        # PHP dependency manager
     mailpit         # Local email testing for Laravel
+    stripe-cli      # Stripe CLI for payment testing (requires tap below)
 
     # Media
     yt-dlp          # Media downloader

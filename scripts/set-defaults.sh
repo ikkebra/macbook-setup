@@ -51,6 +51,23 @@ defaults write NSGlobalDomain AppleHighlightColor -string "0.698039 0.843137 1.0
 success "Appearance configured (Dark Mode enabled)"
 
 ###############################################################################
+# Menu Bar                                                                     #
+###############################################################################
+
+step "Configuring menu bar"
+
+# Show battery percentage in menu bar
+defaults write com.apple.menuextra.battery ShowPercent -string "YES"
+# Also set via Control Center for macOS Ventura+
+defaults write com.apple.controlcenter "NSStatusItem Visible Battery" -bool true
+defaults -currentHost write com.apple.controlcenter.plist BatteryShowPercentage -bool true
+
+# Always show Bluetooth icon in menu bar
+defaults write com.apple.controlcenter "NSStatusItem Visible Bluetooth" -bool true
+
+success "Menu bar configured (battery %, Bluetooth icon)"
+
+###############################################################################
 # General UI/UX                                                                #
 ###############################################################################
 
