@@ -753,19 +753,32 @@ fi
 
 step "SAFARI"
 
+# macOS Ventura+ sandboxes Safari preferences. Write to the container directly.
+SAFARI_PLIST="$HOME/Library/Containers/com.apple.Safari/Data/Library/Preferences/com.apple.Safari.plist"
+
+_safari_write() {
+    if [[ -f "$SAFARI_PLIST" ]]; then
+        /usr/libexec/PlistBuddy -c "Set :$1 $2" "$SAFARI_PLIST" 2>/dev/null \
+            || /usr/libexec/PlistBuddy -c "Add :$1 $2 $3" "$SAFARI_PLIST" 2>/dev/null
+    else
+        # Fallback for older macOS or first run before Safari has launched
+        defaults write com.apple.Safari "$1" -"$2" "$3" 2>/dev/null || true
+    fi
+}
+
 if [[ "$MODE" == "express" ]]; then
-    defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
-    defaults write com.apple.Safari IncludeDevelopMenu -bool true
-    defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
-    defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
+    _safari_write IncludeInternalDebugMenu bool true
+    _safari_write IncludeDevelopMenu bool true
+    _safari_write WebKitDeveloperExtrasEnabledPreferenceKey bool true
+    _safari_write "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" bool true
     success "Safari developer tools enabled"
     ((CHANGES_MADE++))
 else
     if ask "Enable Safari Developer menu and Web Inspector?"; then
-        defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
-        defaults write com.apple.Safari IncludeDevelopMenu -bool true
-        defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
-        defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
+        _safari_write IncludeInternalDebugMenu bool true
+        _safari_write IncludeDevelopMenu bool true
+        _safari_write WebKitDeveloperExtrasEnabledPreferenceKey bool true
+        _safari_write "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" bool true
         success "Safari developer tools enabled"
         ((CHANGES_MADE++))
     fi
