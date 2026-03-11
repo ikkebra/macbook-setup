@@ -9,7 +9,7 @@ fi
 # Shell Options                                                                #
 ###############################################################################
 
-stty sane
+stty sane 2>/dev/null
 
 # History settings — don't share across sessions, deduplicate
 unsetopt SHARE_HISTORY
