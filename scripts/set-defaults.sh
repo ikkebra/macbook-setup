@@ -758,11 +758,12 @@ SAFARI_PLIST="$HOME/Library/Containers/com.apple.Safari/Data/Library/Preferences
 
 _safari_write() {
     if [[ -f "$SAFARI_PLIST" ]]; then
-        /usr/libexec/PlistBuddy -c "Set :$1 $2" "$SAFARI_PLIST" 2>/dev/null \
-            || /usr/libexec/PlistBuddy -c "Add :$1 $2 $3" "$SAFARI_PLIST" 2>/dev/null
+        /usr/libexec/PlistBuddy -c "Set :$1 $2" "$SAFARI_PLIST" &>/dev/null \
+            || /usr/libexec/PlistBuddy -c "Add :$1 $2 $3" "$SAFARI_PLIST" &>/dev/null
     else
-        # Fallback for older macOS or first run before Safari has launched
-        defaults write com.apple.Safari "$1" -"$2" "$3" 2>/dev/null || true
+        # Plist doesn't exist yet (Safari hasn't launched). Create it and write.
+        mkdir -p "$(dirname "$SAFARI_PLIST")"
+        /usr/libexec/PlistBuddy -c "Add :$1 $2 $3" "$SAFARI_PLIST" &>/dev/null || true
     fi
 }
 
