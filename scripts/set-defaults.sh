@@ -65,7 +65,14 @@ defaults -currentHost write com.apple.controlcenter.plist BatteryShowPercentage 
 # Always show Bluetooth icon in menu bar
 defaults write com.apple.controlcenter "NSStatusItem Visible Bluetooth" -bool true
 
-success "Menu bar configured (battery %, Bluetooth icon)"
+# Always show volume/sound icon in menu bar
+defaults write com.apple.controlcenter "NSStatusItem Visible Sound" -bool true
+
+# Use 24-hour time format
+defaults write NSGlobalDomain AppleICUForce24HourTime -bool true
+defaults write com.apple.menuextra.clock DateFormat -string "HH:mm"
+
+success "Menu bar configured (24h clock, battery %, Bluetooth, volume)"
 
 ###############################################################################
 # General UI/UX                                                                #
