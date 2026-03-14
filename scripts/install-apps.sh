@@ -59,6 +59,9 @@ formulas=(
     mailpit         # Local email testing for Laravel
     stripe-cli      # Stripe CLI for payment testing (requires tap below)
 
+    # Claude Code tools
+    agent-browser   # Headless browser automation for Claude Code
+
     # Media
     yt-dlp          # Media downloader
     ffmpeg          # Media processing (needed by yt-dlp)

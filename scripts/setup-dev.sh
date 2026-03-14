@@ -336,8 +336,61 @@ if command -v composer &>/dev/null; then
     echo "  laravel/telescope   — Debug dashboard"
     echo "  echolabsdev/prism   — Unified LLM integration"
     echo "  laravel/pint        — Code style fixer (also installed globally)"
+    echo ""
+    warn "Per-project Laravel + Claude Code setup:"
+    echo "  php artisan boost:install  — Laravel Boost (MCP server for Claude Code)"
+    echo "  Adds: schema inspection, route queries, artisan commands, Laravel docs search"
 else
     warn "Composer not found — it will be available after Herd is installed"
+fi
+
+###############################################################################
+# Claude Code Configuration (optional)                                         #
+###############################################################################
+
+step "Claude Code configuration"
+
+CLAUDE_DIR="$HOME/.claude"
+
+if [[ -d "$CLAUDE_DIR" ]] && [[ -d "$CLAUDE_DIR/agents" ]]; then
+    success "Claude Code config already installed"
+else
+    echo ""
+    echo "  Install Claude Code config? (agents, skills, pre-approved commands)"
+    echo "  Repo: github.com/ikkebra/claude-config"
+    echo ""
+    read -p "  Install Claude Code config? (y/n) " -n 1 -r
+    echo ""
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        # Back up existing config
+        if [[ -d "$CLAUDE_DIR" ]]; then
+            cp -r "$CLAUDE_DIR" "${CLAUDE_DIR}.bak"
+            warn "Existing ~/.claude backed up to ~/.claude.bak"
+        fi
+
+        mkdir -p "$CLAUDE_DIR"
+
+        # Clone and install
+        TEMP_DIR=$(mktemp -d)
+        git clone git@github.com:ikkebra/claude-config.git "$TEMP_DIR" 2>/dev/null \
+            || git clone https://github.com/ikkebra/claude-config.git "$TEMP_DIR"
+
+        cp -r "$TEMP_DIR"/* "$CLAUDE_DIR/"
+        cp -r "$TEMP_DIR"/.* "$CLAUDE_DIR/" 2>/dev/null || true
+        rm -rf "$TEMP_DIR"
+
+        # Make statusline executable
+        [[ -f "$CLAUDE_DIR/statusline.sh" ]] && chmod +x "$CLAUDE_DIR/statusline.sh"
+
+        success "Claude Code config installed"
+        echo ""
+        echo "  Includes:"
+        echo "    Agents:  laravel-debugger, laravel-simplifier, laravel-feature-builder, task-planner"
+        echo "    Skills:  agent-browser, ray-skill, context7, Spatie PHP guidelines, and more"
+        echo "    Config:  pre-approved commands, extended thinking, high effort"
+    else
+        skip "Skipped Claude Code config"
+    fi
 fi
 
 ###############################################################################
