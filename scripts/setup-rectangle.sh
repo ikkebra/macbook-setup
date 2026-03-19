@@ -42,8 +42,9 @@ defaults write com.knollsoft.Rectangle launchOnLogin -bool true
 # Hide menu bar icon (optional — set to false if you want to see it)
 defaults write com.knollsoft.Rectangle hideMenubarIcon -bool false
 
-# Don't show the splash screen
-defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 1
+# Cycle through sizes on repeated execution (half → two-thirds → one-third)
+# 0 = cycle half/two-thirds/one-third, 1 = move to next display, 2 = disabled
+defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 0
 
 # Now override specific shortcuts using Rectangle's keycode format
 # Rectangle uses a JSON-like format for shortcut overrides:
