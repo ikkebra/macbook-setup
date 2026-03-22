@@ -124,7 +124,9 @@ if [[ "$MODE" == "express" ]]; then
     defaults write NSGlobalDomain AppleInterfaceStyle -string "Dark"
     defaults write NSGlobalDomain AppleAccentColor -int 4
     defaults write NSGlobalDomain AppleHighlightColor -string "0.698039 0.843137 1.000000 Blue"
-    success "Dark Mode, blue accent"
+    # Disable icons in menus (macOS Tahoe+)
+    defaults write -g NSMenuEnableActionImages -bool NO
+    success "Dark Mode, blue accent, no menu icons"
     ((CHANGES_MADE++))
 else
     if ask "Enable Dark Mode?"; then
@@ -152,6 +154,12 @@ else
     defaults write NSGlobalDomain AppleHighlightColor -string "${accent_colors[$((PICK_RESULT-1))]}"
     success "Accent color set"
     ((CHANGES_MADE++))
+
+    if ask "Disable icons in menus (macOS Tahoe+)?"; then
+        defaults write -g NSMenuEnableActionImages -bool NO
+        success "Menu icons disabled"
+        ((CHANGES_MADE++))
+    fi
 fi
 
 ###############################################################################
